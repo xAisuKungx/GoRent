@@ -1,0 +1,257 @@
+body {
+  background: linear-gradient(135deg, #0f172a, #1e293b);
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding-top: 20px;
+  font-family: Arial, sans-serif;
+}
+
+.login-card {
+  width: 100%;
+  max-width: 400px;
+  background: white;
+  border-radius: 20px;
+  padding: 40px 30px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+}
+
+.logo {
+  width: 90px;
+  height: 90px;
+  background: #0d6efd;
+  border-radius: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0 auto 20px;
+  color: white;
+  font-size: 32px;
+  font-weight: bold;
+}
+
+.pin-input {
+  text-align: center;
+  font-size: 28px;
+  letter-spacing: 10px;
+  height: 60px;
+  border-radius: 15px;
+}
+
+.btn-login {
+  height: 50px;
+}
+
+
+.error-text {
+  display: none;
+}
+
+.menu-card {
+  background: white;
+  border-radius: 20px;
+  padding: 30px;
+  cursor: pointer;
+  transition: 0.2s;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+}
+
+.menu-card:hover {
+  transform: translateY(-5px);
+}
+
+.table-responsive {
+  overflow-x: auto;
+}
+
+table {
+  min-width: 1400px;
+}
+
+th {
+  white-space: nowrap;
+  background: #f8fafc !important;
+}
+
+table{
+  min-width: 1400px;
+}
+
+th,
+td{
+  text-align: center;
+  vertical-align: middle;
+}
+
+th,
+td{
+  vertical-align: middle;
+  white-space: normal;
+  word-break: break-word;
+  font-size: 14px;
+}
+
+/* ลำดับ */
+.col-id{
+  width: 50px;
+  text-align: center;
+}
+
+/* เวลาเพิ่มข้อมูล */
+.col-created{
+  width: 100px;
+}
+
+/* ชื่อลูกค้า */
+.col-customer{
+  width: 80px;
+}
+
+/* วันที่ */
+.col-date{
+  width: 100px;
+}
+
+/* เวลา */
+.col-time{
+  width: 50px;
+  text-align: center;
+}
+
+/* จุดรับ/ส่ง */
+.col-location{
+  width: 90px;
+}
+
+/* ราคา */
+.col-price{
+  width: 60px;
+  text-align: right;
+}
+
+/* ค่าเพิ่ม */
+.col-extra{
+  width: 60px;
+  text-align: right;
+}
+
+/* ยอดรวม */
+.col-total{
+  width: 80px;
+  text-align: right;
+  font-weight: 600;
+}
+
+/* หมายเหตุ */
+.col-note{
+  width: 70px;
+}
+
+.col-driver,
+.col-otherdriver{
+  width: 50px;
+}
+
+/* status */
+.col-status{
+  width: 50px;
+}
+
+/* ปุ่ม */
+.col-action{
+  width: 80px;
+}
+/* 
+.sticky-customer{
+  position: sticky;
+  left: 0;
+  background: white;
+  z-index: 2;
+} */
+
+.today-card{
+  background: white;
+  border-radius: 16px;
+  padding: 16px;
+  margin-bottom: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,.08);
+}
+
+.today-time{
+  font-size: 22px;
+  font-weight: bold;
+  color: #0d6efd;
+}
+
+.today-customer{
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.today-route{
+  color: #6c757d;
+}
+
+.today-total{
+  font-weight: bold;
+  color: #198754;
+}
+
+.table-responsive {
+  max-height: 75vh;
+  overflow-y: auto;
+}
+
+
+
+.filter-sticky{
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: #fff;
+  border-bottom: 1px solid #dee2e6;
+}
+
+.queue-table-wrapper{
+  max-height: 75vh;
+  overflow-y: auto;
+}
+
+/* หัวตารางทุกคอลัมน์ */
+.queue-table-wrapper thead th{
+  position: sticky;
+  top: 0;
+  background: #fff;
+  z-index: 90;
+  box-shadow: 0 1px 0 #dee2e6;
+}
+
+/* หัวตาราง */
+thead th{
+  position: sticky;
+  top: 0;
+  background: white;
+  z-index: 90;
+}
+
+/* คอลัมน์ชื่อลูกค้า */
+.sticky-customer{
+  position: sticky;
+  left: 0;
+  background: white;
+}
+
+/* หัวคอลัมน์ชื่อลูกค้า */
+thead th.sticky-customer{
+  left: 0;
+  z-index: 120;
+  background: white;
+}
+
+/* ข้อมูลชื่อลูกค้า */
+tbody td.sticky-customer{
+  left: 0;
+  z-index: 80;
+  background: white;
+}
