@@ -384,6 +384,23 @@ async function saveQueue() {
 
     return;
   }
+  const travelDate =
+    document.getElementById("travelDate").value;
+
+  if (!travelDate) {
+    alert("กรุณาเลือกวันที่เดินทาง");
+    document.getElementById("travelDate").focus();
+    return;
+  }
+
+  const travelTime =
+    document.getElementById("travelTime").value;
+
+  if (!travelTime) {
+    alert("กรุณาระบุเวลาเดินทาง");
+    document.getElementById("travelTime").focus();
+    return;
+  }
 
   const driver =
   document.getElementById("driver").value;
