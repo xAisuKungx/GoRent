@@ -698,8 +698,9 @@ function applyFilters() {
   });
 
 
-  const now = new Date();
-
+  const today = new Date();
+  today.setHours(0,0,0,0);
+  
   filtered.sort((a, b) => {
   
     const dateA = new Date(
@@ -710,17 +711,20 @@ function applyFilters() {
       `${b["วันที่เดินทาง"]}T${b["เวลา"]}`
     );
   
-    const aPast = dateA < now;
-    const bPast = dateB < now;
+    const dayA = new Date(dateA);
+    dayA.setHours(0,0,0,0);
   
-    // อนาคตมาก่อน อดีตทีหลัง
+    const dayB = new Date(dateB);
+    dayB.setHours(0,0,0,0);
+  
+    const aPast = dayA < today;
+    const bPast = dayB < today;
+  
     if (aPast !== bPast) {
       return aPast ? 1 : -1;
     }
   
-    // ภายในกลุ่มเดียวกัน เรียงตามวันเวลา
     return dateA - dateB;
-  
   });
 
 
