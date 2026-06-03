@@ -698,18 +698,29 @@ function applyFilters() {
   });
 
 
-  filtered.sort((a, b) => {
+  const now = new Date();
 
+  filtered.sort((a, b) => {
+  
     const dateA = new Date(
       `${a["วันที่เดินทาง"]}T${a["เวลา"]}`
     );
-
+  
     const dateB = new Date(
       `${b["วันที่เดินทาง"]}T${b["เวลา"]}`
     );
-
+  
+    const aPast = dateA < now;
+    const bPast = dateB < now;
+  
+    // อนาคตมาก่อน อดีตทีหลัง
+    if (aPast !== bPast) {
+      return aPast ? 1 : -1;
+    }
+  
+    // ภายในกลุ่มเดียวกัน เรียงตามวันเวลา
     return dateA - dateB;
-
+  
   });
 
 
