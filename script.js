@@ -256,7 +256,7 @@ function backToMenu() {
   document.getElementById("menuPage").classList.remove("d-none");
 }
 
-const API_URL = "https://script.google.com/macros/s/AKfycbzbwLtQmkteRwU1N1wRxNPKM-Jl5_j5t68nuPutz9msTQANbE-p8qsYKGvtpcvSZQ9k/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbyniXDZ__5z90He6Pl6nW9RNgmkPLiomtwHwyvyx1m1Rs2gtxhzZ_XXNbMs9K8XeNof/exec";
 
 async function loadQueueData() {
 
