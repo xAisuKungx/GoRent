@@ -259,3 +259,7 @@ tbody td.sticky-customer{
 .past-row td {
   background-color: #fdfcb4 !important;
 }
+
+.action-btn {
+  width: 70px;
+}
