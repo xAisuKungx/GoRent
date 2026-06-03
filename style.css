@@ -255,3 +255,7 @@ tbody td.sticky-customer{
   z-index: 80;
   background: white;
 }
+
+.past-row td {
+  background-color: #fdfcb4 !important;
+}
