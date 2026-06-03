@@ -735,8 +735,18 @@ function renderTable(data){
 
   data.forEach((item, index) => {
 
+    const tripDate = new Date(
+      `${item["วันที่เดินทาง"]}T${item["เวลา"]}`
+    );
+
+    const isPast = tripDate < new Date();
+
+    const rowClass = isPast
+      ? "past-row"
+      : "";
+
     html += `
-    <tr>
+    <tr class="${rowClass}">
 
       <td class="col-id">
         ${index + 1}
