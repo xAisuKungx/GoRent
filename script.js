@@ -256,7 +256,7 @@ function backToMenu() {
   document.getElementById("menuPage").classList.remove("d-none");
 }
 
-const API_URL = "https://script.google.com/macros/s/AKfycbx5cDaBVIhhPtihJ7qWL9Q1qXZFT0vdATnpT_uxYkc0VSZLS2OhSavAHbdc6_lNpcc/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbzbwLtQmkteRwU1N1wRxNPKM-Jl5_j5t68nuPutz9msTQANbE-p8qsYKGvtpcvSZQ9k/exec";
 
 async function loadQueueData() {
 
@@ -275,7 +275,7 @@ async function loadQueueData() {
 
     loadDriverFilter();
 
-    setDefaultDateRange();
+    // setDefaultDateRange();
 
     applyFilters(); // ใช้ฟิลเตอร์ที่ตั้งไว้
 
@@ -303,6 +303,7 @@ function clearForm() {
   document.getElementById("total").value = "";
   document.getElementById("note").value = "";
   document.getElementById("status").value = "รอดำเนินการ";
+  document.getElementById("mflowNotice").style.display = "none";
   document.getElementById("driver").value = "";
   document.getElementById("otherDriver").value = "";
 
@@ -384,6 +385,7 @@ async function saveQueue() {
 
     return;
   }
+
   const travelDate =
     document.getElementById("travelDate").value;
 
@@ -519,6 +521,11 @@ function editQueue(eventId) {
   document.getElementById("status").value =
     item["สถานะ"];
 
+  document.getElementById("mflowNotice").style.display =
+    item["สถานะ"] === "เสร็จสิ้น"
+      ? "block"
+      : "none";
+
   document.getElementById("driver").value =
     item["คนขับ"];
 
@@ -553,6 +560,47 @@ async function cancelQueue(eventId) {
     if (result.status === "success") {
 
       alert("ยกเลิกเรียบร้อย");
+
+      loadQueueData();
+
+    } else {
+
+      alert(result.message);
+
+    }
+
+  } catch (err) {
+
+    console.error(err);
+
+    alert("เกิดข้อผิดพลาด");
+
+  }
+
+}
+
+async function deleteQueue(eventId) {
+
+  if (!confirm("ต้องการลบรายการนี้ถาวรใช่หรือไม่?")) {
+    return;
+  }
+
+  try {
+
+    const res = await fetch(API_URL, {
+      method: "POST",
+      body: JSON.stringify({
+        action: "delete",
+        eventId: eventId,
+        token: localStorage.getItem("token")
+      })
+    });
+
+    const result = await res.json();
+
+    if (result.status === "success") {
+
+      alert("ลบข้อมูลเรียบร้อย");
 
       loadQueueData();
 
@@ -650,14 +698,22 @@ function applyFilters() {
   });
 
 
-  // filtered.sort((a, b) => {
+  filtered.sort((a, b) => {
 
-  //   const dateA = `${a["วันที่เดินทาง"]} ${a["เวลา"]}`;
-  //   const dateB = `${b["วันที่เดินทาง"]} ${b["เวลา"]}`;
+    const dateA = new Date(
+      `${a["วันที่เดินทาง"]}T${a["เวลา"]}`
+    );
 
-  //   return dateA.localeCompare(dateB);
+    const dateB = new Date(
+      `${b["วันที่เดินทาง"]}T${b["เวลา"]}`
+    );
 
-  // });
+    return dateA - dateB;
+
+  });
+
+
+
   renderTable(filtered);
 
 }
@@ -666,13 +722,13 @@ function renderTable(data){
 
   let html = "";
 
-  data.forEach(item => {
+  data.forEach((item, index) => {
 
     html += `
     <tr>
 
       <td class="col-id">
-        ${item["ลำดับ"] || ""}
+        ${index + 1}
       </td>
 
       <td class="col-created">
@@ -743,6 +799,13 @@ function renderTable(data){
           ยกเลิก
         </button>
 
+        <button
+          class="btn btn-dark btn-sm"
+          onclick="deleteQueue('${item.eventId}')"
+        >
+          ลบ
+        </button>
+
       </td>
 
     </tr>
@@ -765,26 +828,26 @@ function clearFilters() {
   document.getElementById("filterStartDate").value = "";
   document.getElementById("filterEndDate").value = "";
 
-  setDefaultDateRange();
+  // setDefaultDateRange();
   applyFilters();
 
 }
 
 
-function setDefaultDateRange() {
+// function setDefaultDateRange() {
 
-  const today = new Date();
+//   const today = new Date();
 
-  const tomorrow = new Date();
-  tomorrow.setDate(today.getDate() + 30);
+//   const tomorrow = new Date();
+//   tomorrow.setDate(today.getDate() + 30);
 
-  document.getElementById("filterStartDate").value =
-    today.toISOString().split("T")[0];
+//   document.getElementById("filterStartDate").value =
+//     today.toISOString().split("T")[0];
 
-  document.getElementById("filterEndDate").value =
-    tomorrow.toISOString().split("T")[0];
+//   document.getElementById("filterEndDate").value =
+//     tomorrow.toISOString().split("T")[0];
 
-}
+// }
 
 
 window.addEventListener("DOMContentLoaded", () => {
@@ -814,3 +877,17 @@ window.addEventListener("DOMContentLoaded", () => {
 
 });
 
+
+document
+  .getElementById("status")
+  .addEventListener("change", function () {
+
+    const notice =
+      document.getElementById("mflowNotice");
+
+    notice.style.display =
+      this.value === "เสร็จสิ้น"
+        ? "block"
+        : "none";
+
+  });
