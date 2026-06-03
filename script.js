@@ -814,21 +814,21 @@ function renderTable(data){
       <td class="col-action text-center">
 
         <button
-          class="btn btn-warning btn-sm me-1"
+          class="btn btn-warning btn-sm action-btn"
           onclick="editQueue('${item.eventId}')"
         >
           แก้ไข
         </button>
 
         <button
-          class="btn btn-danger btn-sm"
+          class="btn btn-danger btn-sm action-btn"
           onclick="cancelQueue('${item.eventId}')"
         >
           ยกเลิก
         </button>
 
         <button
-          class="btn btn-dark btn-sm"
+          class="btn btn-dark btn-sm action-btn"
           onclick="deleteQueue('${item.eventId}')"
         >
           ลบ
