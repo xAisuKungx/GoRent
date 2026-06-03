@@ -735,11 +735,14 @@ function renderTable(data){
 
   data.forEach((item, index) => {
 
-    const tripDate = new Date(
-      `${item["วันที่เดินทาง"]}T${item["เวลา"]}`
-    );
+    const tripDate = new Date(item["วันที่เดินทาง"]);
 
-    const isPast = tripDate < new Date();
+    tripDate.setHours(0,0,0,0);
+
+    const today = new Date();
+    today.setHours(0,0,0,0);
+
+    const isPast = tripDate < today;
 
     const rowClass = isPast
       ? "past-row"
