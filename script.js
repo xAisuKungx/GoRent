@@ -283,7 +283,7 @@ async function loadQueueData() {
 
     console.error(error);
 
-    alert("โหลดข้อมูลไม่สำเร็จ");
+    alert("โหลดข้อมูลไม่สำเร็จ/กรุณาเข้าระบบใหม่ทุก 7 วัน");
 
   }
 
