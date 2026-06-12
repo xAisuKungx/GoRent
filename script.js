@@ -702,7 +702,7 @@ function applyFilters() {
   today.setHours(0,0,0,0);
   
   filtered.sort((a, b) => {
-  
+
     const dateA = new Date(
       `${a["วันที่เดินทาง"]}T${a["เวลา"]}`
     );
@@ -720,11 +720,19 @@ function applyFilters() {
     const aPast = dayA < today;
     const bPast = dayB < today;
   
+    // อนาคตอยู่ก่อน อดีตอยู่หลัง
     if (aPast !== bPast) {
       return aPast ? 1 : -1;
     }
   
+    // ถ้าทั้งคู่เป็นอดีต → เรียงใหม่ไปเก่า
+    if (aPast && bPast) {
+      return dateB - dateA;
+    }
+  
+    // ถ้าทั้งคู่เป็นปัจจุบัน/อนาคต → เรียงเก่าไปใหม่
     return dateA - dateB;
+  
   });
 
 
