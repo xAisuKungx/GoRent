@@ -11,6 +11,7 @@ function loadDriverFilter() {
     <option value="Other">Other</option>
   `;
 
+  
 }
 
 let editingEventId = null;
