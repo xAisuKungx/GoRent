@@ -124,17 +124,25 @@ function loadTodayQueue(){
     String(now.getMonth() + 1).padStart(2,"0") + "-" +
     String(now.getDate()).padStart(2,"0");
 
-  const todayQueue = currentData.filter(
-    item => item["วันที่เดินทาง"] === today
+  const futureQueue = currentData.filter(
+    item => item["วันที่เดินทาง"] >= today
   );
 
-  todayQueue.sort((a,b)=>
-    a["เวลา"].localeCompare(b["เวลา"])
-  );
+  futureQueue.sort((a, b) => {
+
+    // เรียงวันที่ก่อน
+    if (a["วันที่เดินทาง"] !== b["วันที่เดินทาง"]) {
+      return a["วันที่เดินทาง"].localeCompare(b["วันที่เดินทาง"]);
+    }
+
+    // ถ้าวันเดียวกันค่อยเรียงเวลา
+    return a["เวลา"].localeCompare(b["เวลา"]);
+
+  });
 
   let html = "";
 
-  todayQueue.forEach(item => {
+  futureQueue.forEach(item => {
 
     let badge = "bg-secondary";
 
@@ -166,9 +174,11 @@ function loadTodayQueue(){
 
       <div class="d-flex justify-content-between">
 
-        <div class="today-time">
-          ${item["เวลา"]}
+        <div class="today-datetime">
+          📅 ${item["วันที่เดินทาง"]}<br>
+          🕒 ${item["เวลา"]}
         </div>
+
 
         <span class="badge ${badge}">
           ${item["สถานะ"]}
@@ -206,12 +216,12 @@ function loadTodayQueue(){
     `;
   });
 
-  if(todayQueue.length === 0){
+  if(futureQueue.length === 0){
 
     html = `
       <tr>
         <td colspan="6">
-          ไม่มีคิวในวันนี้
+          ยังไม่มีคิว
         </td>
       </tr>
     `;
@@ -224,7 +234,7 @@ function loadTodayQueue(){
 
   document.getElementById(
     "todayQueueCount"
-  ).textContent = todayQueue.length;
+  ).textContent = futureQueue.length;
 
 }
 
