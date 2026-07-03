@@ -1,5 +1,40 @@
 let currentData = [];
 
+const API_URL = "https://script.google.com/macros/s/AKfycbyniXDZ__5z90He6Pl6nW9RNgmkPLiomtwHwyvyx1m1Rs2gtxhzZ_XXNbMs9K8XeNof/exec";
+
+async function loadQueueData() {
+
+  try {
+
+    const token = localStorage.getItem("token");
+
+    const response = await fetch(
+      API_URL + "?token=" + encodeURIComponent(token)
+    );
+
+    const text = await response.text();
+
+    console.log(text);
+
+    const data = JSON.parse(text);
+
+    currentData = data;
+
+    loadDriverFilter();
+
+    applyFilters();
+    loadQueue();
+
+  } catch (error) {
+
+    alert(error.stack);
+
+  }
+
+}
+
+
+
 function loadDriverFilter() {
 
   const select =
@@ -53,6 +88,9 @@ async function login() {
         .getElementById("menuPage")
         .classList.remove("d-none");
 
+      // โหลดข้อมูลไว้ล่วงหน้า
+      loadQueueData();
+
       errorText.style.display = "none";
 
     } else {
@@ -83,10 +121,10 @@ function logout() {
   document.getElementById("menuPage")
     .classList.add("d-none");
 
-  document.getElementById("manageQueuePage")
+  document.getElementById("HistoryQueuePage")
     .classList.add("d-none");
 
-  document.getElementById("todayQueuePage")
+  document.getElementById("QueuePage")
     .classList.add("d-none");
 
   document.getElementById("addQueuePage")
@@ -97,26 +135,26 @@ function logout() {
 
 }
 
-async function showTodayQueue() {
+async function showQueue() {
 
   document
     .getElementById("menuPage")
     .classList.add("d-none");
 
   document
-    .getElementById("todayQueuePage")
+    .getElementById("QueuePage")
     .classList.remove("d-none");
 
   if(currentData.length === 0){
     await loadQueueData();
   }
 
-  loadTodayQueue();
+  loadQueue();
 
 }
 
 
-function loadTodayQueue(){
+function loadQueue(){
 
   const now = new Date();
 
@@ -176,14 +214,37 @@ function loadTodayQueue(){
       <div class="d-flex justify-content-between">
 
         <div class="today-datetime">
+        <span class="badge ${badge}">
+          ${item["สถานะ"]}
+        </span><br>
           📅 ${item["วันที่เดินทาง"]}<br>
           🕒 ${item["เวลา"]}
         </div>
 
+        <span>
+          <button
+            class="btn btn-warning btn-sm action-btn"
+            onclick="editQueue('${item.eventId}')"
+          >
+            แก้ไข
+          </button><br>
 
-        <span class="badge ${badge}">
-          ${item["สถานะ"]}
+          <button
+            class="btn btn-danger btn-sm action-btn"
+            onclick="cancelQueue('${item.eventId}')"
+          >
+            ยกเลิก
+          </button><br>
+
+          <button
+            class="btn btn-dark btn-sm action-btn"
+            onclick="deleteQueue('${item.eventId}')"
+          >
+            ลบ
+          </button>
         </span>
+
+        
 
       </div>
 
@@ -230,29 +291,29 @@ function loadTodayQueue(){
   }
 
   document.getElementById(
-    "todayQueueBody"
+    "QueueBody"
   ).innerHTML = html;
 
   document.getElementById(
-    "todayQueueCount"
+    "QueueCount"
   ).textContent = futureQueue.length;
 
 }
 
-function showManageQueue() {
+function showHistoryQueue() {
 
   document.getElementById("menuPage").classList.add("d-none");
 
-  document.getElementById("manageQueuePage").classList.remove("d-none");
+  document.getElementById("HistoryQueuePage").classList.remove("d-none");
 
   loadQueueData();
 
 }
 
-function backToMenuFromToday(){
+function backToMenuFromQueue(){
 
     document
-      .getElementById("todayQueuePage")
+      .getElementById("QueuePage")
       .classList.add("d-none");
 
     document
@@ -263,42 +324,11 @@ function backToMenuFromToday(){
 
 function backToMenu() {
   
-  document.getElementById("manageQueuePage").classList.add("d-none");
+  document.getElementById("HistoryQueuePage").classList.add("d-none");
   document.getElementById("menuPage").classList.remove("d-none");
 }
 
-const API_URL = "https://script.google.com/macros/s/AKfycbyniXDZ__5z90He6Pl6nW9RNgmkPLiomtwHwyvyx1m1Rs2gtxhzZ_XXNbMs9K8XeNof/exec";
 
-async function loadQueueData() {
-
-  try {
-
-    const token =
-      localStorage.getItem("token");
-
-    const response = await fetch(
-      API_URL + "?token=" + encodeURIComponent(token)
-    );
-
-    const data = await response.json();
-
-    currentData = data;
-
-    loadDriverFilter();
-
-    // setDefaultDateRange();
-
-    applyFilters(); // ใช้ฟิลเตอร์ที่ตั้งไว้
-
-  } catch (error) {
-
-    console.error(error);
-
-    alert("โหลดข้อมูลไม่สำเร็จ/กรุณาเข้าระบบใหม่ทุก 7 วัน");
-
-  }
-
-}
 
 function clearForm() {
 
@@ -329,7 +359,7 @@ function showAddQueuePage(){
   clearForm();
 
   document
-    .getElementById("manageQueuePage")
+    .getElementById("QueuePage")
     .classList.add("d-none");
 
   document
@@ -341,7 +371,7 @@ function showAddQueuePage(){
 function showEditPage(){
 
   document
-    .getElementById("manageQueuePage")
+    .getElementById("QueuePage")
     .classList.add("d-none");
 
   document
@@ -350,14 +380,14 @@ function showEditPage(){
 
 }
 
-function backToManageQueue(){
+function backToQueuePage(){
 
   document
     .getElementById("addQueuePage")
     .classList.add("d-none");
 
   document
-    .getElementById("manageQueuePage")
+    .getElementById("QueuePage")
     .classList.remove("d-none");
 
 }
@@ -468,10 +498,11 @@ async function saveQueue() {
 
       editingEventId = null;
 
-      alert("บันทึกสำเร็จ");
+      await loadQueueData();
 
-      backToManageQueue();
-      loadQueueData();
+      backToQueuePage();
+
+      alert("บันทึกสำเร็จ");
 
     } else {
 
@@ -572,7 +603,7 @@ async function cancelQueue(eventId) {
 
       alert("ยกเลิกเรียบร้อย");
 
-      loadQueueData();
+      await loadQueueData();
 
     } else {
 
@@ -613,7 +644,7 @@ async function deleteQueue(eventId) {
 
       alert("ลบข้อมูลเรียบร้อย");
 
-      loadQueueData();
+      await loadQueueData();
 
     } else {
 
@@ -830,30 +861,6 @@ function renderTable(data){
         ${item["หมายเหตุ"] || ""}
       </td>
 
-      <td class="col-action text-center">
-
-        <button
-          class="btn btn-warning btn-sm action-btn"
-          onclick="editQueue('${item.eventId}')"
-        >
-          แก้ไข
-        </button>
-
-        <button
-          class="btn btn-danger btn-sm action-btn"
-          onclick="cancelQueue('${item.eventId}')"
-        >
-          ยกเลิก
-        </button>
-
-        <button
-          class="btn btn-dark btn-sm action-btn"
-          onclick="deleteQueue('${item.eventId}')"
-        >
-          ลบ
-        </button>
-
-      </td>
 
     </tr>
     `;
@@ -875,26 +882,9 @@ function clearFilters() {
   document.getElementById("filterStartDate").value = "";
   document.getElementById("filterEndDate").value = "";
 
-  // setDefaultDateRange();
   applyFilters();
 
 }
-
-
-// function setDefaultDateRange() {
-
-//   const today = new Date();
-
-//   const tomorrow = new Date();
-//   tomorrow.setDate(today.getDate() + 30);
-
-//   document.getElementById("filterStartDate").value =
-//     today.toISOString().split("T")[0];
-
-//   document.getElementById("filterEndDate").value =
-//     tomorrow.toISOString().split("T")[0];
-
-// }
 
 
 window.addEventListener("DOMContentLoaded", () => {
