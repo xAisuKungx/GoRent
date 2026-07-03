@@ -1,4 +1,9 @@
 let currentData = [];
+let editingEventId = null;
+let showOldPending = false;
+let returnToOldPending = false;
+
+let isEditing = false;
 
 const API_URL = "https://script.google.com/macros/s/AKfycbyniXDZ__5z90He6Pl6nW9RNgmkPLiomtwHwyvyx1m1Rs2gtxhzZ_XXNbMs9K8XeNof/exec";
 
@@ -36,10 +41,6 @@ async function loadQueueData() {
 
     currentData = data;
 
-    loadDriverFilter();
-
-    applyFilters();
-    loadQueue();
 
   } catch (error) {
 
@@ -51,6 +52,17 @@ async function loadQueueData() {
 
 }
 
+function refreshQueuePage(){
+
+    updateOldQueueAlert();
+
+    loadDriverFilter();
+
+    applyFilters();
+
+    loadQueue();
+
+}
 
 
 function loadDriverFilter() {
@@ -67,7 +79,7 @@ function loadDriverFilter() {
   
 }
 
-let editingEventId = null;
+
 
 async function login() {
 
@@ -107,7 +119,8 @@ async function login() {
         .classList.remove("d-none");
 
       // โหลดข้อมูลไว้ล่วงหน้า
-      loadQueueData();
+      await loadQueueData();
+      refreshQueuePage();
 
       errorText.style.display = "none";
 
@@ -163,11 +176,8 @@ async function showQueue() {
     .getElementById("QueuePage")
     .classList.remove("d-none");
 
-  if(currentData.length === 0){
-    await loadQueueData();
-  }
-
-  loadQueue();
+  await loadQueueData();
+  refreshQueuePage();
 
 }
 
@@ -181,11 +191,24 @@ function loadQueue(){
     String(now.getMonth() + 1).padStart(2,"0") + "-" +
     String(now.getDate()).padStart(2,"0");
 
-  const futureQueue = currentData.filter(
-    item => item["วันที่เดินทาง"] >= today
-  );
+  let queueData;
 
-  futureQueue.sort((a, b) => {
+  if (showOldPending) {
+
+    queueData = currentData.filter(item =>
+      item["วันที่เดินทาง"] < today &&
+      item["สถานะ"] === "รอดำเนินการ"
+    );
+
+  } else {
+
+    queueData = currentData.filter(item =>
+      item["วันที่เดินทาง"] >= today
+    );
+
+  }
+
+  queueData.sort((a, b) => {
 
     // เรียงวันที่ก่อน
     if (a["วันที่เดินทาง"] !== b["วันที่เดินทาง"]) {
@@ -199,7 +222,22 @@ function loadQueue(){
 
   let html = "";
 
-  futureQueue.forEach(item => {
+  let titleHTML = "";
+
+  if (showOldPending) {
+
+    titleHTML = `
+      <div class="alert alert-danger">
+        ⚠ กำลังแสดง "งานค้างอัปเดต"
+      </div>
+    `;
+
+  } else {
+
+    titleHTML = "";
+  }
+
+  queueData.forEach(item => {
 
     let badge = "bg-secondary";
 
@@ -296,7 +334,7 @@ function loadQueue(){
     `;
   });
 
-  if(futureQueue.length === 0){
+  if(queueData.length === 0){
 
     html = `
       <tr>
@@ -310,25 +348,102 @@ function loadQueue(){
 
   document.getElementById(
     "QueueBody"
-  ).innerHTML = html;
+  ).innerHTML = titleHTML + html;
 
   document.getElementById(
     "QueueCount"
-  ).textContent = futureQueue.length;
+  ).textContent = queueData.length;
 
 }
 
-function showHistoryQueue() {
+
+function updateOldQueueAlert(){
+
+  const now = new Date();
+
+  const today =
+    now.getFullYear() + "-" +
+    String(now.getMonth() + 1).padStart(2,"0") + "-" +
+    String(now.getDate()).padStart(2,"0");
+
+  const count = currentData.filter(item =>
+    item["วันที่เดินทาง"] < today &&
+    item["สถานะ"] === "รอดำเนินการ"
+  ).length;
+
+  const alertBox =
+    document.getElementById("oldQueueAlert");
+
+  const currentBox =
+    document.getElementById("currentQueueBox");
+
+  const text =
+    document.getElementById("oldQueueText");
+
+  if(showOldPending){
+
+    alertBox.classList.add("d-none");
+    currentBox.classList.remove("d-none");
+
+    return;
+  }
+
+  currentBox.classList.add("d-none");
+
+  if(count > 0){
+
+    text.textContent =
+      `⚠ มีงานค้าง ${count} งาน ที่ยังไม่ได้อัปเดตสถานะ`;
+
+    alertBox.classList.remove("d-none");
+
+  }else{
+
+    alertBox.classList.add("d-none");
+
+  }
+
+}
+
+function showOldPendingQueue(){
+
+  showOldPending = true;
+
+  updateOldQueueAlert();
+
+  loadQueue();
+
+}
+
+function showCurrentQueue(){
+
+  showOldPending = false;
+
+  updateOldQueueAlert();
+
+  loadQueue();
+
+}
+
+
+async function showHistoryQueue() {
 
   document.getElementById("menuPage").classList.add("d-none");
 
   document.getElementById("HistoryQueuePage").classList.remove("d-none");
 
-  loadQueueData();
+  await loadQueueData();
+  refreshQueuePage();
 
 }
 
 function backToMenuFromQueue(){
+
+  showOldPending = false;
+
+  updateOldQueueAlert();
+
+  loadQueue();
 
     document
       .getElementById("QueuePage")
@@ -373,6 +488,10 @@ function clearForm() {
 }
 
 function showAddQueuePage(){
+
+  isEditing = false;
+
+  returnToOldPending = showOldPending;
 
   clearForm();
 
@@ -518,6 +637,14 @@ async function saveQueue() {
 
       await loadQueueData();
 
+      if (isEditing) {
+        showOldPending = returnToOldPending;
+      } else {
+        showOldPending = false;
+      }
+      
+      refreshQueuePage();
+
       backToQueuePage();
 
       alert("บันทึกสำเร็จ");
@@ -541,6 +668,10 @@ async function saveQueue() {
 }
 
 function editQueue(eventId) {
+
+  isEditing = true;
+
+  returnToOldPending = showOldPending;
 
   editingEventId = eventId;
 
@@ -622,6 +753,7 @@ async function cancelQueue(eventId) {
       alert("ยกเลิกเรียบร้อย");
 
       await loadQueueData();
+      refreshQueuePage();
 
     } else {
 
@@ -663,6 +795,7 @@ async function deleteQueue(eventId) {
       alert("ลบข้อมูลเรียบร้อย");
 
       await loadQueueData();
+      refreshQueuePage();
 
     } else {
 
