@@ -75,16 +75,16 @@
     <div class="row g-4">
 
       <div class="col-md-6">
-        <div class="menu-card" onclick="showTodayQueue()">
-          <h4>งาน</h4>
-          <p>ดูรายการงานที่ต้องทำ</p>
+        <div class="menu-card" onclick="showQueue()">
+          <h4>คิวงาน</h4>
+          <p>งานที่ต้องทำ</p>
         </div>
       </div>
 
       <div class="col-md-6">
-        <div class="menu-card" onclick="showManageQueue()">
-          <h4>จัดการคิว</h4>
-          <p>เพิ่ม แก้ไข และยกเลิกรายการ</p>
+        <div class="menu-card" onclick="showHistoryQueue()">
+          <h4>ประวัติ</h4>
+          <p>ดูรายการงานทั้งหมด</p>
         </div>
       </div>
 
@@ -92,8 +92,8 @@
 
   </div>
 
-  <!-- Today Queue Page -->
-  <div class="container py-5 d-none" id="todayQueuePage">
+  <!-- Queue Page -->
+  <div class="container py-5 d-none" id="QueuePage">
 
     <div class="d-flex justify-content-between align-items-center mb-4">
 
@@ -107,7 +107,7 @@
         </small>
       </div>
 
-      <button class="btn btn-secondary" onclick="backToMenuFromToday()">
+      <button class="btn btn-secondary" onclick="backToMenuFromQueue()">
         กลับ
       </button>
 
@@ -121,12 +121,20 @@
 
           <span class="badge bg-primary fs-6">
             จำนวนงาน:
-            <span id="todayQueueCount">0</span>
+            <span id="QueueCount">0</span>
           </span>
 
         </div>
+        <div class="d-flex justify-content-end">
+            <button
+              class="btn btn-success"
+              onclick="showAddQueuePage()"
+            >
+              +เพิ่มรายการ
+            </button>
+          </div>
 
-        <div id="todayQueueBody"></div>
+        <div id="QueueBody"></div>
 
       </div>
 
@@ -134,14 +142,14 @@
 
   </div>
 
-  <!-- Manage Queue Page -->
-  <div class="container py-3 d-none" id="manageQueuePage">
+  <!-- History Queue Page -->
+  <div class="container py-3 d-none" id="HistoryQueuePage">
 
     <div class="d-flex justify-content-between align-items-center mb-3">
 
       <div>
         <h2 class="fw-bold mb-0 text-white">
-          จัดการคิว
+          ประวัติ
         </h2>
 
         <small class="text-secondary">
@@ -215,15 +223,6 @@
 
           </div>
 
-          <div class="d-flex justify-content-end">
-            <button
-              class="btn btn-primary"
-              onclick="showAddQueuePage()"
-            >
-              + เพิ่มรายการ
-            </button>
-          </div>
-
         </div>
 
       </div>
@@ -295,9 +294,6 @@
                 หมายเหตุ
               </th>
 
-              <th class="col-action text-center">
-                จัดการ
-              </th>
 
             </tr>
 
@@ -330,7 +326,7 @@
       </small>
     </div>
 
-    <button class="btn btn-secondary" onclick="backToManageQueue()">
+    <button class="btn btn-secondary" onclick="backToQueuePage()">
       กลับ
     </button>
 
