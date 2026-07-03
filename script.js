@@ -12,11 +12,27 @@ async function loadQueueData() {
       API_URL + "?token=" + encodeURIComponent(token)
     );
 
+    if (!response.ok) {
+      throw new Error(`HTTP Error ${response.status}`);
+    }
+
     const text = await response.text();
 
-    console.log(text);
+    let data;
 
-    const data = JSON.parse(text);
+    try {
+      data = JSON.parse(text);
+    } catch (err) {
+      console.error("Server Response:", text);
+      throw new Error("Server ส่งข้อมูลไม่ใช่ JSON");
+    }
+
+    // Token หมดอายุ
+    if (data.status === "error" && data.message === "Unauthorized") {
+      alert("Session หมดอายุ กรุณาเข้าสู่ระบบใหม่");
+      logout();
+      return;
+    }
 
     currentData = data;
 
@@ -27,7 +43,9 @@ async function loadQueueData() {
 
   } catch (error) {
 
-    alert(error.stack);
+    console.error(error);
+
+    alert(error.message);
 
   }
 
