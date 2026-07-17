@@ -264,3 +264,20 @@ tbody td.sticky-customer{
 .action-btn {
   width: 70px;
 }
+
+.flatpickr-day.has-queue {
+    background: #dc3545 !important;
+    border-color: #dc3545 !important;
+    color: #fff !important;
+    font-weight: bold;
+}
+
+.flatpickr-day.has-queue:hover {
+    background: #bb2d3b !important;
+    border-color: #bb2d3b !important;
+}
+
+.flatpickr-day.has-queue.selected {
+    background: #a71d2a !important;
+    border-color: #a71d2a !important;
+}
