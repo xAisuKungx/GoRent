@@ -5,6 +5,8 @@ let returnToOldPending = false;
 
 let isEditing = false;
 
+let travelDatePicker = null;
+
 const API_URL = "https://script.google.com/macros/s/AKfycbyniXDZ__5z90He6Pl6nW9RNgmkPLiomtwHwyvyx1m1Rs2gtxhzZ_XXNbMs9K8XeNof/exec";
 
 async function loadQueueData() {
@@ -461,7 +463,38 @@ function backToMenu() {
   document.getElementById("menuPage").classList.remove("d-none");
 }
 
+function initTravelDatePicker() {
 
+    const queueDates = new Set(
+        currentData.map(item => item["วันที่เดินทาง"])
+    );
+
+    if (travelDatePicker) {
+        travelDatePicker.destroy();
+    }
+
+    travelDatePicker = flatpickr("#travelDate", {
+
+        dateFormat: "Y-m-d",
+        disableMobile: true,
+
+        onDayCreate(dObj, dStr, fp, dayElem) {
+
+            const y = dayElem.dateObj.getFullYear();
+            const m = String(dayElem.dateObj.getMonth() + 1).padStart(2, "0");
+            const d = String(dayElem.dateObj.getDate()).padStart(2, "0");
+
+            const date = `${y}-${m}-${d}`;
+
+            if (queueDates.has(date)) {
+                dayElem.classList.add("has-queue");
+            }
+
+        }
+
+    });
+
+}
 
 function clearForm() {
 
@@ -487,13 +520,17 @@ function clearForm() {
 
 }
 
-function showAddQueuePage(){
+async function showAddQueuePage(){
 
   isEditing = false;
 
   returnToOldPending = showOldPending;
 
+  await loadQueueData();
+
   clearForm();
+
+  initTravelDatePicker();
 
   document
     .getElementById("QueuePage")
@@ -724,8 +761,10 @@ function editQueue(eventId) {
     item["ชื่อคนขับอื่น"] || "";
 
   toggleOtherDriver();
-
+  
   showEditPage();
+  
+  initTravelDatePicker();
 
 }
 
